@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Bike Parking - Entry</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px #ccc;
+      width: 300px;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      width: 100%;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Bike Parking Entry</h2>
+    <input type="text" id="bikeNumber" placeholder="Enter Bike Number" />
+    <input type="text" id="phoneNumber" placeholder="Enter Phone Number" />
+    <button onclick="generateOTP()">Generate OTP</button>
+    <div class="message" id="message"></div>
+    <div id="otpDisplay" style="margin-top: 15px; font-size: 18px; font-weight: bold;"></div>
+  </div>
+
+  <script>
+    function generateOTP() {
+      const bike = document.getElementById('bikeNumber').value.trim();
+      const phone = document.getElementById('phoneNumber').value.trim();
+      const messageEl = document.getElementById('message');
+      const otpEl = document.getElementById('otpDisplay');
+      messageEl.textContent = '';
+      otpEl.textContent = '';
+
+      if (!bike || !phone) {
+        messageEl.style.color = 'red';
+        messageEl.textContent = 'Please enter both bike number and phone number.';
+        return;
+      }
+
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      // Get existing parking data from localStorage or create new object
+      let parkingData = {};
+      try {
+        parkingData = JSON.parse(localStorage.getItem('parkingData')) || {};
+      } catch {
+        parkingData = {};
+      }
+
+      // Save OTP and entry time
+      parkingData[otp] = {
+        bikeNumber: bike,
+        phoneNumber: phone,
+        entryTime: Date.now(),
+        exited: false
+      };
+
+      localStorage.setItem('parkingData', JSON.stringify(parkingData));
+
+      otpEl.textContent = `Your OTP is: ${otp}`;
+      messageEl.style.color = 'green';
+      messageEl.textContent = 'Thank you! Please keep your OTP safe for exit.';
+
+      // Clear inputs
+      document.getElementById('bikeNumber').value = '';
+      document.getElementById('phoneNumber').value = '';
+    }
+  </script>
+</body>
+</html>
+
